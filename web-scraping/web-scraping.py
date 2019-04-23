@@ -3,22 +3,6 @@ import requests
 from bs4 import BeautifulSoup
 import xlsxwriter
 
-workbook = xlsxwriter.Workbook('blocket_data.xlsx')
-worksheet = workbook.add_worksheet()
-
-bold = workbook.add_format({'bold': 1})
-money_format = workbook.add_format({'num_format': '$#,##0'})
-date_format = workbook.add_format({'num_format': 'mmmm d yyyy'})
-worksheet.set_column(0, 0, 50)
-worksheet.set_column(1, 1, 30)
-worksheet.set_column(2, 2, 20)
-worksheet.write_string(0, 0, "Title", bold)
-worksheet.write_string(0, 1, "Price", bold)
-worksheet.write_string(0, 2, "Region", bold)
-
-row = 1
-col = 0
-
 def list_product_price(page_number):
     url = 'https://www.blocket.se/stockholm?ca=11&o=' + str(page_number)
     result = requests.get(url)    
@@ -44,10 +28,28 @@ def list_product_price(page_number):
          worksheet.write_string(row, col + 2, "Stockholm")
          row += 1             
    
+def main():
+    for page_number in range(1, 5):
+        print("|" + "-"*50 + " PAGE " + str(page_number) + " " + "-"*50 + "|")
+        list_product_price(page_number)
 
-for page_number in range(1, 5):
-    print("|" + "-"*50 + " PAGE " + str(page_number) + " " + "-"*50 + "|")
-    list_product_price(page_number)
+
+workbook = xlsxwriter.Workbook('blocket_data.xlsx')
+worksheet = workbook.add_worksheet()
+bold = workbook.add_format({'bold': 1})
+money_format = workbook.add_format({'num_format': '$#,##0'})
+date_format = workbook.add_format({'num_format': 'mmmm d yyyy'})
+worksheet.set_column(0, 0, 50)
+worksheet.set_column(1, 1, 30)
+worksheet.set_column(2, 2, 20)
+worksheet.write_string(0, 0, "Title", bold)
+worksheet.write_string(0, 1, "Price", bold)
+worksheet.write_string(0, 2, "Region", bold)
+
+row = 1
+col = 0
+
+main()
 
 workbook.close()
     
