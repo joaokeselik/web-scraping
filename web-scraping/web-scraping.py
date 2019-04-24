@@ -1,10 +1,16 @@
-import sys
+#! python3 
+# web-scraping.py - Fetches data from Blocket.se
+
 import requests
 from bs4 import BeautifulSoup
 import xlsxwriter
 
+#fazer apenas para hela_sverige e pegar preco, categoria e regiao
+
+
 def list_product_price(page_number):
-    url = 'https://www.blocket.se/stockholm?ca=11&o=' + str(page_number)
+    url = 'https://www.blocket.se/hela_sverige?&o=' + str(page_number)
+    print('Downloading page %s...' % url) 
     result = requests.get(url)    
     try:    
         result.raise_for_status() 
@@ -16,8 +22,9 @@ def list_product_price(page_number):
 
     items = soup.find_all("a", "item_link")
     prices = soup.find_all("p", "list_price") 
+    region_categories=soup.find_all("div", "pull-left")
 
-    for item, price in zip(items, prices):
+    for item, price, region_category in zip(items, prices,  region_categories[6:]):
          title = item.string.strip()        
          print("%s  PRICE:  %s" %(title, price.text))
          
@@ -25,7 +32,7 @@ def list_product_price(page_number):
          global col
          worksheet.write_string(row, col, title)
          worksheet.write_string(row, col + 1, price.text)
-         worksheet.write_string(row, col + 2, "Stockholm")
+         worksheet.write_string(row, col + 2, region_category.text)
          row += 1             
    
 def main():
