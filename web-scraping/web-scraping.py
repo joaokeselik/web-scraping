@@ -22,9 +22,10 @@ def list_product_price(page_number):
 
     items = soup.find_all("a", "item_link")
     prices = soup.find_all("p", "list_price") 
-    region_categories=soup.find_all("div", "pull-left")
+    categories=soup.find_all('a', {'tabindex': '-1'})
+    regions=soup.find_all('div', 'pull-left')
 
-    for item, price, region_category in zip(items, prices,  region_categories[6:]):
+    for item, price, category, region in zip(items, prices, categories, regions[6:]):
          title = item.string.strip()        
          print("%s  PRICE:  %s" %(title, price.text))
          
@@ -32,7 +33,8 @@ def list_product_price(page_number):
          global col
          worksheet.write_string(row, col, title)
          worksheet.write_string(row, col + 1, price.text)
-         worksheet.write_string(row, col + 2, region_category.text)
+         worksheet.write_string(row, col + 2, category.text)
+         worksheet.write_string(row, col + 3, region.text)
          row += 1             
    
 def main():
@@ -49,9 +51,11 @@ date_format = workbook.add_format({'num_format': 'mmmm d yyyy'})
 worksheet.set_column(0, 0, 50)
 worksheet.set_column(1, 1, 30)
 worksheet.set_column(2, 2, 20)
+worksheet.set_column(3, 3, 20)
 worksheet.write_string(0, 0, "Title", bold)
 worksheet.write_string(0, 1, "Price", bold)
-worksheet.write_string(0, 2, "Region", bold)
+worksheet.write_string(0, 2, "Category", bold)
+worksheet.write_string(0, 3, "Region", bold)
 
 row = 1
 col = 0
