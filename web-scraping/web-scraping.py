@@ -25,6 +25,7 @@ def list_product_price(page_number):
     categories=soup.find_all('a', {'tabindex': '-1'})
     regions=soup.find_all('div', 'pull-left')
 
+    #still some problems parsing the region
     for item, price, category, region in zip(items, prices, categories, regions[6:]):
          title = item.string.strip()        
          print("%s  PRICE:  %s" %(title, price.text))
@@ -34,7 +35,7 @@ def list_product_price(page_number):
          worksheet.write_string(row, col, title)
          worksheet.write_string(row, col + 1, price.text)
          worksheet.write_string(row, col + 2, category.text)
-         worksheet.write_string(row, col + 3, region.text)
+         worksheet.write_string(row, col + 3, region.text.split(',')[-1])
          row += 1             
    
 def main():
