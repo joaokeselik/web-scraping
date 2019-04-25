@@ -1,12 +1,11 @@
 #! python3 
-# web-scraping.py - Fetches data from Blocket.se
+# web-scraping.py - Gets data from Blocket.se
 
 import requests
 from bs4 import BeautifulSoup
 import xlsxwriter
 
-#fazer apenas para hela_sverige e pegar preco, categoria e regiao
-
+#maybe should remove main() and use a while instead getting the next page links
 
 def list_product_price(page_number):
     url = 'https://www.blocket.se/hela_sverige?&o=' + str(page_number)
@@ -25,24 +24,36 @@ def list_product_price(page_number):
     categories=soup.find_all('a', {'tabindex': '-1'})
     regions=soup.find_all('div', 'pull-left')
 
-    #still some problems parsing the region
-    for item, price, category, region in zip(items, prices, categories, regions[6:]):
-         title = item.string.strip()        
-         print("%s  PRICE:  %s" %(title, price.text))
+    #still some problems parsing the region with BMWselection which comes straight after the region in the same div
+    for item_a, price_p, category_a, region_div in zip(items, prices, categories, regions[6:]):
+         item = item_a.string.strip()   
+
+         price = price_p.text
+         if not price:
+             price = "NULL"
+
+         category = category_a.text
+
+         region = region_div.text.split(',')[-1]
+         if "Butik" in region:
+             region="NULL"    
+             
+         print("%s  PRICE:  %s  CATEGORY:  %s  REGION:  %s" %(item, price, category, region))
          
          global row
          global col
-         worksheet.write_string(row, col, title)
-         worksheet.write_string(row, col + 1, price.text)
-         worksheet.write_string(row, col + 2, category.text)
-         worksheet.write_string(row, col + 3, region.text.split(',')[-1])
-         row += 1             
-   
+         worksheet.write_string(row, col, item)
+         worksheet.write_string(row, col + 1, price)
+         worksheet.write_string(row, col + 2, category)
+         worksheet.write_string(row, col + 3, region)
+         row += 1           
+ 
 def main():
+    #while not url.endswith('&last=1'):
     for page_number in range(1, 5):
         print("|" + "-"*50 + " PAGE " + str(page_number) + " " + "-"*50 + "|")
         list_product_price(page_number)
-
+    #url = list_product_price
 
 workbook = xlsxwriter.Workbook('blocket_data.xlsx')
 worksheet = workbook.add_worksheet()
