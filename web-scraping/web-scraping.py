@@ -25,17 +25,16 @@ col = 0
 
 url = 'https://www.blocket.se/hela_sverige'
 
-i=0
+#i=0
 
 while not url.endswith('&last=1'):    
+    
+    #i=i+1
+    #if i == 20:
+     #   break
 
-    i=i+1
-    if i == 20:
-        break
-
-    print("|" + "-"*20 + " PAGE " + str(url) + " " + "-"*20 + "|")    
-
-    print('Downloading page %s...' % url) 
+    print("-"*50 + " " + str(url) + " " + "-"*50)    
+    
     result = requests.get(url)    
     try:    
         result.raise_for_status() 
@@ -50,9 +49,6 @@ while not url.endswith('&last=1'):
     categories = soup.find_all('a', {'tabindex': '-1'})
     regions = soup.find_all('div', 'pull-left')
 
-    #still some problems parsing the region with BMWselection which comes straight after the region in the same div 
-    #and Lastbil, truck & entreprenad which has a first comma in the category
-
     for item_a, price_p, category_a, region_div in zip(items, prices, categories, regions[6:]):
          item = item_a.string.strip()   
 
@@ -61,15 +57,13 @@ while not url.endswith('&last=1'):
              price = "NULL"
 
          category = category_a.text
-         if re.search(r"Lägenheter|Utland|Djur|Villor", category):
+         if re.search(r"Lägenheter|Utland|Djur|Villor|Tjänster", category):
             continue
          
-         if re.search(r"Jobb", region_div):
-             continue
+         if re.search(r"Jobb", region_div.text):
+            continue
 
-         region = region_div.text.split(',')[-1]
-         if "Butik" in region:
-             region = "NULL"
+         region = region_div.text.split(',')[-1]         
              
          print("%s  PRICE:  %s  CATEGORY:  %s  REGION:  %s" %(item, price, category, region))         
          
@@ -79,14 +73,14 @@ while not url.endswith('&last=1'):
          worksheet.write_string(row, col + 3, region)
          row += 1     
          
-    nextLink = soup.find_all('a', 'page_nav')[6]
+    nextLink = soup.find_all('a', 'page_nav')[5]
     if not "Nästa sida »" in nextLink.decode_contents().strip():
-        nextLink = soup.find_all('a', 'page_nav')[7]
+        nextLink = soup.find_all('a', 'page_nav')[6]
+        if not "Nästa sida »" in nextLink.decode_contents().strip():  
+            nextLink = soup.find_all('a', 'page_nav')[7]               
     
-    nextLinkAppendix = nextLink.get('href') 
-    
-    url = 'https://www.blocket.se/hela_sverige' + nextLinkAppendix  
-    
+    nextLinkSuffix = nextLink.get('href')     
+    url = 'https://www.blocket.se/hela_sverige' + nextLinkSuffix     
 
 workbook.close()
     
