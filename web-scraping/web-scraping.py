@@ -35,13 +35,13 @@ while not url.endswith('&last=1'):
 
     print("-"*50 + " " + str(url) + " " + "-"*50)    
     
-    result = requests.get(url)    
+    response = requests.get(url)    
     try:    
-        result.raise_for_status() 
+        response.raise_for_status() 
     except Exception as exc:    
         print('There was a problem: %s' % (exc))
 
-    c = result.content
+    c = response.content
     soup = BeautifulSoup(c, "html.parser")
 
     items = soup.find_all("a", "item_link")
