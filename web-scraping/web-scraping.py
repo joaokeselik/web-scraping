@@ -41,8 +41,7 @@ while not url.endswith('&last=1'):
     except Exception as exc:    
         print('There was a problem: %s' % (exc))
 
-    c = response.content
-    soup = BeautifulSoup(c, "html.parser")
+    soup = BeautifulSoup(response.text, "html.parser")
 
     items = soup.find_all("a", "item_link")
     prices = soup.find_all("p", "list_price") 
