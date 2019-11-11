@@ -6,16 +6,14 @@ from bs4 import BeautifulSoup
 import xlsxwriter
 import re
 
-workbook = xlsxwriter.Workbook('blocket_data.xlsx')
+workbook = xlsxwriter.Workbook('blocket_data_privat.xlsx')
 worksheet = workbook.add_worksheet()
 bold = workbook.add_format({'bold': 1})
-money_format = workbook.add_format({'num_format': '$#,##0'})
-date_format = workbook.add_format({'num_format': 'mmmm d yyyy'})
 worksheet.set_column(0, 0, 50)
 worksheet.set_column(1, 1, 30)
 worksheet.set_column(2, 2, 20)
 worksheet.set_column(3, 3, 20)
-worksheet.write_string(0, 0, "Title", bold)
+worksheet.write_string(0, 0, "Item", bold)
 worksheet.write_string(0, 1, "Price", bold)
 worksheet.write_string(0, 2, "Category", bold)
 worksheet.write_string(0, 3, "Region", bold)
@@ -23,15 +21,15 @@ worksheet.write_string(0, 3, "Region", bold)
 row = 1
 col = 0
 
-url = 'https://www.blocket.se/hela_sverige'
+url = 'https://www.blocket.se/hela_sverige?ca=11&st=s&f=p&w=3'
 
 #i=0
 
 while not url.endswith('&last=1'):    
     
     #i=i+1
-    #if i == 20:
-     #   break
+    #if i == 5:
+    #    break
 
     print("-"*50 + " " + str(url) + " " + "-"*50)    
     
